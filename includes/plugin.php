@@ -217,6 +217,9 @@ final class Plugin {
     // Theme Styles - Form Fields
     require_once( __DIR__ . '/extensions/kit/form-fields.php' );
 
+    // Theme Styles - Typography
+    require_once( __DIR__ . '/extensions/kit/typography.php' );
+
   }
 
     /**
@@ -230,8 +233,14 @@ final class Plugin {
     // Widget - Button
     require_once( __DIR__ . '/extensions/widgets/button.php' );
 
+    // Widget - Call To Action
+    require_once( __DIR__ . '/extensions/widgets/call-to-action.php' );
+
     // Widget - Form
-    //require_once( __DIR__ . '/extensions/widgets/form.php' );
+    require_once( __DIR__ . '/extensions/widgets/form.php' );
+
+    // Widget - Testimonial Carousel
+    require_once( __DIR__ . '/extensions/widgets/testimonial-carousel.php' );
 
   }
 
