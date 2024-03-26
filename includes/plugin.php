@@ -239,6 +239,9 @@ final class Plugin {
     // Widget - Form
     require_once( __DIR__ . '/extensions/widgets/form.php' );
 
+    // Widget - Image
+    require_once( __DIR__ . '/extensions/widgets/image.php' );
+
     // Widget - Testimonial Carousel
     require_once( __DIR__ . '/extensions/widgets/testimonial-carousel.php' );
 
