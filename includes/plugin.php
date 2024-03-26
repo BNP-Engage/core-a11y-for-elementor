@@ -199,8 +199,22 @@ final class Plugin {
    */
   public function init() {
 
+    $this->enqueue_styles();
     $this->register_extensions_kit();
     $this->register_extensions_widgets();
+  }
+
+  /**
+   * Enqueue Styles
+   *
+   * Load style sheet for plugin.
+   *
+   */
+  public function enqueue_styles( ) {
+
+    // Theme Styles
+    wp_enqueue_style( 'Core_A11Y_For_Elementor', plugin_dir_url( __FILE__ ) . '../assets/css/style.css', array(), self::VERSION, 'all' );
+
   }
 
   /**

@@ -1,0 +1,16 @@
+/* Full Height Image */
+.core-a11y-full-img-yes, .core-a11y-full-img-yes .elementor-widget-container, .core-a11y-full-img-yes .elementor-image {
+  height: 100%
+}
+.core-a11y-full-img-yes img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  left: 0
+}
+@media screen and (min-width: 768px) {
+  .core-a11y-full-img-yes img {
+    position: absolute;
+  }
+}
