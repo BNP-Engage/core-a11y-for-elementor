@@ -86,7 +86,7 @@ class Image_Widget {
 
     // HEADING - Image Heading
     $element->add_control(
-      $this->prefix.'heading_buttons_focus',
+      $this->prefix.'heading_image_focus',
       [
         'type' => Controls_Manager::HEADING,
         'label' => __( 'Focus State', 'core-a11y-for-elementor' ),
@@ -99,7 +99,7 @@ class Image_Widget {
 
     // COLOR - Image Focus Border Color
     $element->add_control(
-      $this->prefix.'buttons_focus_border_color',
+      $this->prefix.'image_focus_border_color',
       [
         'label' => __( 'Border Color', 'core-a11y-for-elementor' ),
         'type' => Controls_Manager::COLOR,
@@ -117,7 +117,7 @@ class Image_Widget {
     $element->add_group_control(
       Group_Control_Box_Shadow::get_type(),
       [
-        'name' => $this->prefix.'buttons_focus_box_shadow',
+        'name' => $this->prefix.'image_focus_box_shadow',
         'label' => __( 'Box Shadow', 'core-a11y-for-elementor' ),
         'dynamic' => [],
         'selector' => $control_selectors,
@@ -129,7 +129,7 @@ class Image_Widget {
 
     // SELECT - Outline Type
     $element->add_control(
-      $this->prefix.'buttons_focus_outline_type',
+      $this->prefix.'image_focus_outline_type',
       [
         'label' => __( 'Outline Type', 'core-a11y-for-elementor' ),
         'type' => \Elementor\Controls_Manager::SELECT,
@@ -154,7 +154,7 @@ class Image_Widget {
 
     // SLIDER - Outline Width
     $element->add_control(
-      $this->prefix.'buttons_focus_outline_width',
+      $this->prefix.'image_focus_outline_width',
       [
         'label' => __( 'Width', 'core-a11y-for-elementor' ),
         'type' => Controls_Manager::SLIDER,
@@ -170,7 +170,7 @@ class Image_Widget {
           $control_selectors => 'outline-width: {{SIZE}}{{UNIT}};',
         ],
         'condition' => [
-          $this->prefix.'buttons_focus_outline_type!' => ['', 'none'],
+          $this->prefix.'image_focus_outline_type!' => ['', 'none'],
           'link_to!' => 'none',
         ],
       ]
@@ -178,7 +178,7 @@ class Image_Widget {
 
     // SLIDER - Outline Offset
     $element->add_control(
-      $this->prefix.'buttons_focus_outline_offset',
+      $this->prefix.'image_focus_outline_offset',
       [
         'label' => __( 'Offset', 'core-a11y-for-elementor' ),
         'type' => Controls_Manager::SLIDER,
@@ -194,7 +194,7 @@ class Image_Widget {
           $control_selectors => 'outline-offset: {{SIZE}}{{UNIT}};',
         ],
         'condition' => [
-          $this->prefix.'buttons_focus_outline_type!' => ['', 'none'],
+          $this->prefix.'image_focus_outline_type!' => ['', 'none'],
           'link_to!' => 'none',
         ],
       ]
@@ -202,7 +202,7 @@ class Image_Widget {
 
     // COLOR - Outline Color
     $element->add_control(
-      $this->prefix.'buttons_focus_outline_color',
+      $this->prefix.'image_focus_outline_color',
       [
         'label' => __( 'Color', 'core-a11y-for-elementor' ),
         'type' => Controls_Manager::COLOR,
@@ -211,7 +211,7 @@ class Image_Widget {
           $control_selectors => 'outline-color: {{VALUE}};',
         ],
         'condition' => [
-          $this->prefix.'buttons_focus_outline_type!' => ['', 'none'],
+          $this->prefix.'image_focus_outline_type!' => ['', 'none'],
           'link_to!' => 'none',
         ],
       ]
