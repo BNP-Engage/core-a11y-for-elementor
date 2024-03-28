@@ -2,7 +2,7 @@
 .core-a11y-full-img-yes, .core-a11y-full-img-yes .elementor-widget-container, .core-a11y-full-img-yes .elementor-image {
   height: 100%
 }
-.core-a11y-full-img-yes img {
+.core-a11y-full-img-yes.elementor-widget-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
