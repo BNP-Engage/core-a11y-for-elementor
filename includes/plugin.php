@@ -213,7 +213,7 @@ final class Plugin {
   public function enqueue_styles( ) {
 
     // Theme Styles
-    wp_enqueue_style( 'Core_A11Y_For_Elementor', plugin_dir_url( __FILE__ ) . '../assets/css/style.css', array(), self::VERSION, 'all' );
+    wp_enqueue_style( 'core-a11y-for-elementor', plugin_dir_url( __FILE__ ) . '../assets/css/core-a11y-for-elementor-public.css', array(), self::VERSION, 'all' );
 
   }
 
