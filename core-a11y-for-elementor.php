@@ -15,4 +15,17 @@
  * @package         Core A11Y For Elementor
  */
 
-// Your code starts here.
+ if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+function core_a11y_for_elementor() {
+
+	// Load plugin file
+	require_once( __DIR__ . '/includes/plugin.php' );
+
+	// Run the plugin
+	\Core_A11Y_For_Elementor\Plugin::instance();
+
+}
+add_action( 'plugins_loaded', 'core_a11y_for_elementor' );
