@@ -9,8 +9,8 @@
  * Text Domain:     core-a11y-for-elementor
  * Domain Path:     /languages
  * Version:         0.1.0
- * Elementor tested up to: 3.20.0
- * Elementor Pro tested up to: 3.20.0
+ * Elementor tested up to: 3.20.2
+ * Elementor Pro tested up to: 3.20.2
  *
  * @package         Core A11Y For Elementor
  */
