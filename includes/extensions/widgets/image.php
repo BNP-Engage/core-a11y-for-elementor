@@ -71,6 +71,30 @@ class Image_Widget {
       ]
     );
 
+    // SLIDER - Min Height
+    $element->add_responsive_control(
+      $this->prefix.'full_height_image_min_height',
+      [
+        'label' => __( 'Min Height', 'core-a11y-for-elementor' ),
+        'description' => __( 'Use this if you need the image to set the height of the section, rather than its neighboring column.', 'core-a11y-for-elementor'),
+        'type' => \Elementor\Controls_Manager::SLIDER,
+        'size_units' => [ 'px' ],
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 600,
+            'step' => 1,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}}.core-a11y-full-img-yes' => 'min-height: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          $this->prefix.'full_height_image' => ['yes'],
+        ],
+      ]
+    );
+
   }
 
   /**
