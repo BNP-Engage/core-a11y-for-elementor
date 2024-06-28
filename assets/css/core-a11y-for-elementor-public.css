@@ -9,7 +9,7 @@
   object-position: center;
   left: 0
 }
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 769px) {
   .core-a11y-full-img-yes img {
     position: absolute;
   }
