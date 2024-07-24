@@ -1,8 +1,8 @@
-=== Core A11Y For Elementor ===
+=== Core A11Y - Accessibility for Elementor ===
 Contributors: BNPEngage
-Tags: accessibility, a11y, elementor
+Tags: accessibility, a11y, wcag, ada, accessible, elementor, elementor addons
 Requires at least: 5.4
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -12,7 +12,7 @@ An extension for Elementor/Elementor Pro which adds additional functionality for
 
 == Description ==
 
-CoreA11Y For Elementor is an add-on for sites using the Elementor page builder that adds additional settings inside of Elementor's site settings and widget controls to help fix accessibility issues. This plugin is meant to empower Elementor users to be more proactive in editing basic accessibility problems such as missing focus states. 
+Core A11Y - Accessibility for Elementor is an add-on for sites using the Elementor page builder that adds additional settings inside of Elementor's site settings and widget controls to help fix accessibility issues. This plugin is meant to empower Elementor users to be more proactive in editing basic accessibility problems such as missing focus states. 
 
 
 **Site Settings**
