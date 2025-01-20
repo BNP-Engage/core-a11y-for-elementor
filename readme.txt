@@ -1,10 +1,10 @@
 === Core A11Y - Accessibility for Elementor ===
 Contributors: BNPEngage
-Tags: accessibility, a11y, wcag, ada, accessible, elementor, elementor addons
+Tags: accessibility, a11y, accessible, elementor, elementor addons
 Requires at least: 5.4
-Tested up to: 6.6
+Tested up to: 6.7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,9 @@ If you need further assistance, we may able to help. You can [request a free web
 4. You will now begin to see the new settings in the Elementor site settings and widgets.
 
 == Changelog ==
+
+= 1.0.2 - 2025-01-20 =
+* Updated for Elementor 3.26 compatibility
 
 = 1.0.1 - 2024-07-24 =
 * Modify name & tags in readme
