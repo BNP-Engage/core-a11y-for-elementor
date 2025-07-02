@@ -40,10 +40,42 @@ class Call_To_Action_Widget {
     $this->prefix = 'core_a11y_';
 
     // Register New controls for Box Style section
+    add_action( 'elementor/element/call-to-action/section_content/before_section_end', [ $this, 'register_new_section_content_controls' ], 10, 2 );
+
+    // Register New controls for Box Style section
     add_action( 'elementor/element/call-to-action/box_style/before_section_end', [ $this, 'register_new_box_style_controls' ], 10, 2 );
 
     // Register New controls for Button Style section
     add_action( 'elementor/element/call-to-action/button_style/before_section_end', [ $this, 'register_new_button_style_controls' ], 10, 2 );
+
+  }
+
+  /**
+   * Register Image widget height control.
+   *
+   * @param Controls_Stack $element Elementor element.
+   * @param array         $args Section arguments.
+   */
+  public function register_new_section_content_controls( Controls_Stack $element, $args ) {
+
+    // SWITCHER - Hover on Whole Box
+    $element->add_control(
+      $this->prefix.'whole_box_hover',
+      [
+        'label' => __( 'Hover on Whole Box?', 'core-a11y-for-elementor'),
+        'description' => __( 'Select Yes to have the whole box be hoverable, while leaving only the button as the actual link.', 'core-a11y-for-elementor'),
+        'type' => \Elementor\Controls_Manager::SWITCHER,
+        'label_on' => __( 'Yes', 'core-a11y-for-elementor'),
+        'label_off' => __( 'No', 'core-a11y-for-elementor'),
+        'return_value' => 'yes',
+        'default' => 'no',
+        'prefix_class' => 'core-a11y-whole-box-hover-',
+        'condition' => [
+          'link_click' => 'button',
+          'button!' => '',
+        ],
+      ]
+    );
 
   }
 
@@ -220,7 +252,7 @@ class Call_To_Action_Widget {
   public function register_new_button_style_controls( Controls_Stack $element, $args ) {
 
     // Set controls selectors to avoid repetition
-    $button_control_selectors = '{{WRAPPER}} .elementor-cta a.elementor-cta__button:focus-visible';
+    $button_control_selectors = '{{WRAPPER}}.core-a11y-whole-box-hover-yes .elementor-cta a.elementor-cta__button:focus-visible::before, {{WRAPPER}}.core-a11y-whole-box-hover-no .elementor-cta a.elementor-cta__button:focus-visible';
 
     // HEADING - Button Heading
     $element->add_control(
