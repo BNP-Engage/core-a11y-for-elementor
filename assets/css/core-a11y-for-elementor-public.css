@@ -1,5 +1,7 @@
 /* Full Height Image */
-.core-a11y-full-img-yes, .core-a11y-full-img-yes .elementor-widget-container, .core-a11y-full-img-yes .elementor-image {
+.core-a11y-full-img-yes,
+.core-a11y-full-img-yes .elementor-widget-container,
+.core-a11y-full-img-yes .elementor-image {
   height: 100%
 }
 .core-a11y-full-img-yes.elementor-widget-image img {
@@ -13,4 +15,29 @@
   .core-a11y-full-img-yes img {
     position: absolute;
   }
+}
+
+/* Whole Box Hover */
+
+.core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-cta__content,
+.core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-widget-container,
+.core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-cta {
+  overflow: visible;
+}
+.core-a11y-whole-box-hover-yes a::before {
+  content: "";
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+  border-radius: 6px;
+}
+.core-a11y-whole-box-hover-yes a:focus-visible {
+  outline: none;
+}
+/* .core-a11y-whole-box-hover-yes a:focus-visible::before {
+  outline: 2px solid #35aaa7;
+  outline-offset: 4px;
+} */
+.core-a11y-whole-box-hover-yes .elementor-cta__content-item {
+  position: static;
 }
