@@ -223,6 +223,7 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 		public function init() {
 
 			$this->enqueue_styles();
+			$this->enqueue_scripts();
 			$this->register_extensions_kit();
 			$this->register_extensions_widgets();
 		}
@@ -237,6 +238,19 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 
 			// Theme Styles
 			wp_enqueue_style( 'core-a11y-for-elementor', plugin_dir_url( __FILE__ ) . '/assets/css/core-a11y-for-elementor-public.css', array(), self::VERSION, 'all' );
+
+		}
+
+		/**
+		 * Enqueue Scripts
+		 *
+		 * Load javascript for plugin.
+		 *
+		 */
+		public function enqueue_scripts( ) {
+
+			// Theme Script
+			wp_enqueue_script( 'core-a11y-for-elementor', plugin_dir_url( __FILE__ ) . '/assets/js/core-a11y-for-elementor-public.js', array( 'jquery' ), self::VERSION, true );
 
 		}
 
