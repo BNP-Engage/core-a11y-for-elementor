@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       Core A11Y - Accessibility for Elementor
  * Description:       An extension for Elementor and Elementor Pro which adds additional functionality to help fix accessibility issues.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Requires at least: 5.2
  * Requires PHP:      7.4
  * Author:            BNP Engage
@@ -12,8 +12,8 @@
  * Text Domain:       core-a11y-for-elementor
  * Domain Path:       /languages
  * Requires Plugins:  elementor
- * Elementor tested up to: 3.30
- * Elementor Pro tested up to: 3.30
+ * Elementor tested up to: 3.31
+ * Elementor Pro tested up to: 3.31
  */
 
  if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +37,7 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 		 * @since 1.0.0
 		 * @var string The addon version.
 		 */
-		const VERSION = '1.0.2';
+		const VERSION = '1.0.4';
 
 		/**
 		 * Minimum Elementor Version
@@ -223,6 +223,7 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 		public function init() {
 
 			$this->enqueue_styles();
+			$this->enqueue_scripts();
 			$this->register_extensions_kit();
 			$this->register_extensions_widgets();
 		}
@@ -237,6 +238,19 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 
 			// Theme Styles
 			wp_enqueue_style( 'core-a11y-for-elementor', plugin_dir_url( __FILE__ ) . '/assets/css/core-a11y-for-elementor-public.css', array(), self::VERSION, 'all' );
+
+		}
+
+		/**
+		 * Enqueue Scripts
+		 *
+		 * Load javascript for plugin.
+		 *
+		 */
+		public function enqueue_scripts( ) {
+
+			// Theme Script
+			wp_enqueue_script( 'core-a11y-for-elementor', plugin_dir_url( __FILE__ ) . '/assets/js/core-a11y-for-elementor-public.js', array( 'jquery' ), self::VERSION, true );
 
 		}
 
