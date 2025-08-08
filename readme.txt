@@ -4,7 +4,7 @@ Tags: accessibility, a11y, accessible, elementor, elementor addons
 Requires at least: 5.4
 Tested up to: 6.8.1
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,11 @@ If you need further assistance, we may able to help. You can [request a free web
 4. You will now begin to see the new settings in the Elementor site settings and widgets.
 
 == Changelog ==
+
+= 1.0.4 - 2025-08-08 =
+* New: Add 'role="listitem" to loop grid items
+* New: Change 'role' of popups to 'dialog' rather than 'document'. Set 'aria-labelledby' to first heading
+* Bump tested versions of WordPress & Elementor
 
 = 1.0.3 - 2025-07-02 =
 * New: Added option in the Call to Action widget to keep link on button only, but have entire box 'hoverable'
