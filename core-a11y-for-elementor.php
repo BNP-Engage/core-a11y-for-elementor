@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       Core A11Y - Accessibility for Elementor
  * Description:       An extension for Elementor and Elementor Pro which adds additional functionality to help fix accessibility issues.
- * Version:           1.0.4
+ * Version:           1.0.5
  * Requires at least: 5.2
  * Requires PHP:      7.4
  * Author:            BNP Engage
@@ -37,7 +37,7 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 		 * @since 1.0.0
 		 * @var string The addon version.
 		 */
-		const VERSION = '1.0.4';
+		const VERSION = '1.0.5';
 
 		/**
 		 * Minimum Elementor Version
