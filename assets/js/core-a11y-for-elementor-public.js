@@ -20,6 +20,9 @@
       }
     });
 
+    // keep track of element that triggered the modal window.
+    var previousElement = null;
+
     /*
      * POPUP: On Open
      * Fix a11y issues related to the role used
@@ -27,7 +30,13 @@
      */
     elementorFrontend.elements.$document.on( "elementor/popup/show", (event, id) => {
       var popup = $('#elementor-popup-modal-'+id);
+      var dialog = popup.find('[data-elementor-type="popup"]')
       var headings = popup.find(':header');
+      var closeButton =  popup.find('.dialog-close-button')
+      var gform = popup.find('.gform_wrapper form')
+      if (gform) {
+        var submitButton = gform.find('input[type="submit"]')
+      }
 
       // If there are headings, add an ID to the first one so it can be used in aria-labelledby
       if (headings.length) {
@@ -38,6 +47,51 @@
       // Set role to dialog to validate aria label
       popup.attr('role','dialog');
 
+      // Only run if the popup is not already accessible
+      if (dialog.data('elementor-settings')['a11y_navigation'] !== 'yes') {
+        // track which element triggered the modal so that we can restore focus to that element when the modal is closed
+        previousElement = document.activeElement;
+        // Set focus on close button
+        closeButton.focus();
+        // Don't move focus from close button if tabbing backward, unless a gravity form submit button is present, then focus on that
+        closeButton.keydown(function (e) {
+          var key = e.which;
+          if(key == 9 && e.shiftKey) {
+            e.preventDefault();
+            if (submitButton) {
+              submitButton.focus();
+            }
+          }
+        });
+        // If tabbing from the submit button, bring focus back to close button
+        if (submitButton) {
+          submitButton.keydown(function (e) {
+            var key = e.which;
+            if(key == 9) {
+              e.preventDefault();
+              if (closeButton) {
+                closeButton.focus();
+              }
+            }
+          })
+        }
+      }
+
+    });
+
+    /*
+     * POPUP: On Close
+     * Return Focus to triggering item
+     *
+     */
+    $(document).on( "elementor/popup/hide", (event, id) => {
+      var popup = $('#elementor-popup-modal-'+id);
+      var dialog = popup.find('[data-elementor-type="popup"]')
+      // Make the previous element in focus
+      if ( previousElement && dialog.data('elementor-settings')['a11y_navigation'] !== 'yes' ) {
+        previousElement.focus();
+        previousElement = null;
+      }
     });
 
 
