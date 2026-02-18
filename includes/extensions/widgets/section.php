@@ -79,6 +79,9 @@ class Section_Style extends Module {
         'return_value' => 'yes',
         'default' => 'yes',
         'prefix_class' => 'core-a11y-hide-video-bg-',
+        'condition' => [
+          'background_background' => ['video']
+        ]
       ]
     );
 
@@ -90,6 +93,7 @@ class Section_Style extends Module {
         'content_classes' => 'cuxce-alert cuxce-alert-warning',
         'condition' => [
           'core_a11y_video_reduced_motion!' => ['yes'],
+          'background_background' => ['video']
         ],
       ]
     );
