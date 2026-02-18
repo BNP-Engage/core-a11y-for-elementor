@@ -41,3 +41,10 @@
 .core-a11y-whole-box-hover-yes .elementor-cta__content-item {
   position: static;
 }
+
+/* Video Backgrounds */
+@media (prefers-reduced-motion: reduce) {
+  .core-a11y-hide-video-bg-yes .elementor-background-video-container {
+    display: none !important;
+  }
+}
