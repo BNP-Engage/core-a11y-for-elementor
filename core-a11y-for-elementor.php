@@ -299,6 +299,9 @@ if( ! class_exists( 'Core_A11Y_For_Elementor_Main' ) ) {
 			// Widget - Testimonial Carousel
 			require_once( __DIR__ . '/includes/extensions/widgets/testimonial-carousel.php' );
 
+			// Widget - Counter
+			require_once( __DIR__ . '/includes/extensions/widgets/counter.php' );
+
 		}
 
 	}
