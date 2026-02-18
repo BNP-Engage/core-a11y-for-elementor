@@ -102,6 +102,23 @@
       }
     });
 
+    /*
+     * WIDGET: Counter
+     * Disable animation for reduce motion preference
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/counter.default', function ($scope) {
+      var isReduced = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+      if ($scope.hasClass('core-a11y-counter-hide-animation-yes') && isReduced) {
+        var number = $scope.find('.elementor-counter-number');
+        if (number.length) {
+          number.data('duration', '0');
+          var endNumber = number.attr('data-to-value');
+          number.text(endNumber);
+        }
+      }
+    });
+
 
   // End - 	elementor/frontend/init
   });
