@@ -89,7 +89,7 @@ class Section_Style extends Module {
       'core_a11y_bg_note',
       [
         'type' => \Elementor\Controls_Manager::RAW_HTML,
-        'raw' => esc_html__( 'Disrespecting a user\'s reduced motion preference will negatively impact your WCAG score, and is not best practice. Use with caution!', 'core-elements' ),
+        'raw' => esc_html__( 'Disrespecting a user\'s reduced motion preference will negatively impact your WCAG score, and is not best practice. Use with caution!', 'core-a11y-for-elementor' ),
         'content_classes' => 'cuxce-alert cuxce-alert-warning',
         'condition' => [
           'core_a11y_video_reduced_motion!' => ['yes'],
