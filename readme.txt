@@ -2,9 +2,9 @@
 Contributors: BNPEngage
 Tags: accessibility, a11y, accessible, elementor, elementor addons
 Requires at least: 5.4
-Tested up to: 6.8.2
+Tested up to: 6.9.4
 Requires PHP: 7.4
-Stable tag: 1.0.5
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,12 @@ If you need further assistance, we may able to help. You can [request a free web
 4. You will now begin to see the new settings in the Elementor site settings and widgets.
 
 == Changelog ==
+
+= 1.1.0 - 2026-04-15 =
+* New: Controls to respect user's preference on reduce motion for Counter widget
+* New: Controls to respect user's preference on reduce motion for Sections
+* Fix: Popups with forms should focus on the first input upon opening
+* Bump tested versions of WordPress & Elementor
 
 = 1.0.5 - 2025-09-10 =
 * New: Add support for tabbing through gravity forms in popups
