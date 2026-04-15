@@ -34,28 +34,29 @@
       var headings = popup.find(':header');
       var closeButton =  popup.find('.dialog-close-button')
       var gform = popup.find('.gform_wrapper form')
-      if (gform) {
-        var submitButton = gform.find('input[type="submit"]')
-      }
+      var submitButton = gform.length ? gform.find('input[type="submit"]') : null
+
       // Get all form field inputs
       var inputs = popup.find('input, select, textarea')
       // Find the first one that isn't a honeypot
       var firstInput = inputs.first().closest('.gfield').hasClass('gfield--type-honeypot') ? inputs.eq(2) : inputs.first()
+
+      // Set role to dialog to validate aria label
+      popup.attr('role','dialog');
 
       // If there are headings, add an ID to the first one so it can be used in aria-labelledby, and then focus on it
       if (headings.length) {
         headings.first().attr('id', 'popup_'+id+'_heading');
         headings.first().attr('tabindex', '-1');
         popup.attr('aria-labelledby', 'popup_'+id+'_heading');
-        headings.first().focus()
+        headings.first().focus();
       } else {
-        // TODO: for some reason, focusing on the first element isn't working when a11y nav is turned off. when it's turned on, it focuses on it at first but then moves the focus back to the close button 😭
+        // Intercept Elementor stealing focus to the close button
+        closeButton[0].addEventListener('focusin', () => {
+          firstInput.focus();
+        }, { once: true });
         firstInput.focus();
-        // popup.focus();
       }
-
-      // Set role to dialog to validate aria label
-      popup.attr('role','dialog');
 
       // Only run if the popup is not already accessible
       if (dialog.data('elementor-settings')['a11y_navigation'] !== 'yes') {
