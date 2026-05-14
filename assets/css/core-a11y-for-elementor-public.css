@@ -42,9 +42,24 @@
   position: static;
 }
 
-/* Video Backgrounds */
+/* Lottie */
+.e-lottie__image {
+  display: none;
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+
+  /* Video Backgrounds */
   .core-a11y-hide-video-bg-yes .elementor-background-video-container {
     display: none !important;
+  }
+
+  /* Lottie */
+  .e-lottie__animation {
+    display: none;
+  }
+  .e-lottie__image {
+    display: inline;
   }
 }
