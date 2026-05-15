@@ -100,6 +100,7 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
 
       if ($this->is_compatible()) {
         add_action('elementor/init', [$this, 'init']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_reduced_motion_fix'], 0);
       }
 
     }
@@ -213,7 +214,13 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
         self::MINIMUM_PHP_VERSION
       );
 
-      printf(wp_kses('<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>)'), ['strong' => [], 'p' => [], 'div' => ['class' => []]], wp_kses($message, ['strong' => []]));
+      printf(
+        wp_kses(
+          '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>',
+          ['strong' => [], 'p' => [], 'div' => ['class' => []]]
+        ),
+        wp_kses($message, ['strong' => []])
+      );
 
     }
 
@@ -261,6 +268,50 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
 
       // Theme Script
       wp_enqueue_script('core-a11y-for-elementor', plugin_dir_url(__FILE__) . '/assets/js/core-a11y-for-elementor-public.js', array('jquery'), self::VERSION, true);
+
+    }
+
+    /**
+     * Enqueue Reduced Motion Fix
+     *
+     * Loads an early frontend-only fix for Elementor Pro Atomic Interactions that do not currently honor prefers-reduced-motion.
+     *
+     * @since 1.1.1
+     */
+    public function enqueue_reduced_motion_fix()
+    {
+
+      if (is_admin()) {
+        return;
+      }
+
+      wp_enqueue_script(
+        'core-a11y-for-elementor-reduced-motion',
+        plugin_dir_url(__FILE__) . '/assets/js/core-a11y-for-elementor-reduced-motion.js',
+        [],
+        self::VERSION,
+        false
+      );
+
+      wp_add_inline_style(
+        'core-a11y-for-elementor',
+        '@media (prefers-reduced-motion: reduce) {
+      html.core-a11y-prefers-reduced-motion,
+      html.core-a11y-prefers-reduced-motion * {
+        scroll-behavior: auto !important;
+      }
+
+      html.core-a11y-prefers-reduced-motion [data-interaction-id],
+      html.core-a11y-prefers-reduced-motion .e-atomic-element,
+      html.core-a11y-prefers-reduced-motion [data-e-type] {
+        transition-delay: 0s !important;
+        transition-duration: 0.001ms !important;
+        animation-delay: 0s !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }'
+      );
 
     }
 
