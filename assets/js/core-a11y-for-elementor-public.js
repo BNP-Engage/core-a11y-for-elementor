@@ -120,6 +120,18 @@
       }
     });
 
+    /*
+     * WIDGET: Image
+     * Add role="presentation" attribute to images with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/image.default', function ($scope) {
+      var image = $scope.find('img');
+      if ($scope.hasClass('core-a11y-pres-img-yes')) {
+        image.attr('role', 'presentation');
+      }
+    });
+
 
   // End - 	elementor/frontend/init
   });
