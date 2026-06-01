@@ -4,117 +4,129 @@
   var mediaQuery = '(prefers-reduced-motion: reduce)';
   var rootClass = 'core-a11y-prefers-reduced-motion';
 
-  /* Checking & save the user's preference */
-  var mql = window.matchMedia ? window.matchMedia(mediaQuery) : null;
-
   /*
-   * Elementor Pro Atomic Interactions targets:
-   *   data-interaction-id  — current method (centralized script-tag data)
-   *   data-interactions    — legacy method (per-element attribute)
-   *   .e-atomic-element    — Atomic element class
-   *   data-e-type          — Atomic element type marker
+   * Do not target [data-e-type]. It is too broad and exists on regular
+   * Atomic widgets whether they are animated or not.
    */
-  var targetSelector = [
-    '[data-interaction-id]',
-    '[data-interactions]',
-    '.e-atomic-element',
-    '[data-e-type]'
-  ].join(',');
+  var targetSelector = '[data-interaction-id]';
 
   var patchedFlag = '__coreA11yElementorAtomicReducedMotionPatched';
+  var revealedAttribute = 'data-core-a11y-motion-disabled';
 
   function prefersReducedMotion() {
-    return Boolean(mql && mql.matches);
+    return Boolean(
+      window.matchMedia &&
+      window.matchMedia(mediaQuery).matches
+    );
   }
 
-  /* add .core-a11y-prefers-reduced-motion class to html element for finer control */
   function markRoot() {
-    if (document.documentElement) {
-      document.documentElement.classList.toggle(rootClass, prefersReducedMotion());
-    }
+    document.documentElement.classList.toggle(rootClass, prefersReducedMotion());
   }
 
-  
   function isElement(value) {
     return Boolean(value && value.nodeType === Node.ELEMENT_NODE);
   }
 
-  /* check if the elements meet the criteria for animated atomic element based on our selectors */
   function isTarget(element) {
-    if (!isElement(element) || !element.matches) {
-      return false;
-    }
-
-    return (
-      element.matches(targetSelector) ||
-      Boolean(element.closest && element.closest(targetSelector))
+    return Boolean(
+      isElement(element) &&
+      element.matches &&
+      element.matches(targetSelector)
     );
   }
 
-  
-  /**
-   * Returns true if Elementor has already set motion - related inline styles on this element
-   * @param {*} element 
-   * @returns 
-   */
-  function hasInlineMotionStyles(element) {
+  function getInlineStyle(element, property) {
+    if (!element || !element.style) {
+      return '';
+    }
+
+    return element.style.getPropertyValue(property);
+  }
+
+  function hasMotionInlineStyles(element) {
     if (!element || !element.style) {
       return false;
     }
 
+    var opacity = getInlineStyle(element, 'opacity');
+    var transform = getInlineStyle(element, 'transform');
+    var transition = getInlineStyle(element, 'transition');
+    var animation = getInlineStyle(element, 'animation');
+    var filter = getInlineStyle(element, 'filter');
+    var clipPath = getInlineStyle(element, 'clip-path');
+
     return Boolean(
-      element.style.opacity ||
-      element.style.transform ||
-      element.style.transition ||
-      element.style.animation ||
-      element.style.filter ||
-      element.style.clipPath
+      transition ||
+      animation ||
+      filter ||
+      clipPath ||
+      opacity === '0' ||
+      opacity === '0.0' ||
+      opacity === '0.00' ||
+      (transform && transform !== 'none')
     );
   }
 
-  /**
-   * Elementor hides elements before animating them in so we have to un-hide them
-   * 
-   * @param {*} element 
-   * @param {*} reduced 
-   * @returns 
-   */
-  function revealElement(element, reduced) {
-    if (!reduced || !isTarget(element)) {
+  function hasActiveAnimations(element) {
+    if (!element || typeof element.getAnimations !== 'function') {
+      return false;
+    }
+
+    return element.getAnimations().some(function (animation) {
+      return animation && animation.playState !== 'finished';
+    });
+  }
+
+  function shouldRevealElement(element) {
+    return Boolean(
+      prefersReducedMotion() &&
+      isTarget(element) &&
+      (
+        hasMotionInlineStyles(element) ||
+        hasActiveAnimations(element)
+      )
+    );
+  }
+
+  function revealElement(element) {
+    if (!shouldRevealElement(element)) {
       return;
     }
 
-    element.style.setProperty('transition', 'none', 'important');
-    element.style.setProperty('animation', 'none', 'important');
+    element.setAttribute(revealedAttribute, 'true');
 
     /*
-     * Only normalize transform/filter/opacity when Elementor has already placed motion-related inline styles on the element. 
+     * Only write inline styles when the element appears to be controlled by
+     * Elementor's interaction animation system.
      */
-    if (hasInlineMotionStyles(element)) {
-      element.style.setProperty('opacity', '1', 'important');
-      element.style.setProperty('transform', 'none', 'important');
-      element.style.setProperty('filter', 'none', 'important');
-      element.style.setProperty('clip-path', 'none', 'important');
+    element.style.setProperty('transition', 'none', 'important');
+    element.style.setProperty('animation', 'none', 'important');
+    element.style.setProperty('opacity', '1', 'important');
+    element.style.setProperty('transform', 'none', 'important');
+    element.style.setProperty('filter', 'none', 'important');
+    element.style.setProperty('clip-path', 'none', 'important');
+
+    if (typeof element.getAnimations === 'function') {
+      element.getAnimations().forEach(function (animation) {
+        try {
+          animation.cancel();
+        } catch (error) {
+          // Ignore browser-specific animation cancellation errors.
+        }
+      });
     }
   }
 
-  /**
-   * Walks a DOM context and reveals all matching elements that reduced motion applies to.
-   * 
-   * @param {*} context 
-   * @returns 
-   */
   function revealTree(context) {
-    var reduced = prefersReducedMotion();
-
-    if (!reduced || !context) {
+    if (!prefersReducedMotion() || !context) {
       return;
     }
 
     markRoot();
 
-    if (isElement(context)) {
-      revealElement(context, reduced);
+    if (isTarget(context)) {
+      revealElement(context);
     }
 
     if (!context.querySelectorAll) {
@@ -122,14 +134,10 @@
     }
 
     context.querySelectorAll(targetSelector).forEach(function (element) {
-      revealElement(element, reduced);
+      revealElement(element);
     });
   }
 
-  /*
-  * Elementor Pro uses Motion One (window.Motion) as its animation engine, which calls the native element.animate(). 
-  * This patches that so when reduced motion is on, instead of hiding and animating an element, we immediately show it fully visible.
-  */
   function patchWebAnimationsApi() {
     if (
       window[patchedFlag] ||
@@ -146,13 +154,23 @@
 
     Element.prototype.animate = function (keyframes, options) {
       if (prefersReducedMotion() && isTarget(this)) {
-        revealElement(this, true);
+        this.setAttribute(revealedAttribute, 'true');
 
         var animation = nativeAnimate.call(
           this,
           [
-            { opacity: 1, transform: 'none', filter: 'none' },
-            { opacity: 1, transform: 'none', filter: 'none' }
+            {
+              opacity: 1,
+              transform: 'none',
+              filter: 'none',
+              clipPath: 'none'
+            },
+            {
+              opacity: 1,
+              transform: 'none',
+              filter: 'none',
+              clipPath: 'none'
+            }
           ],
           {
             duration: 1,
@@ -162,6 +180,13 @@
             fill: 'both'
           }
         );
+
+        this.style.setProperty('transition', 'none', 'important');
+        this.style.setProperty('animation', 'none', 'important');
+        this.style.setProperty('opacity', '1', 'important');
+        this.style.setProperty('transform', 'none', 'important');
+        this.style.setProperty('filter', 'none', 'important');
+        this.style.setProperty('clip-path', 'none', 'important');
 
         try {
           animation.finish();
@@ -181,48 +206,32 @@
       return;
     }
 
-    /*
-     * Buffer mutations and flush in a single requestAnimationFrame to avoid layout thrashing on pages where Elementor updates many elements in a short burst (e.g. scroll events writing inline styles simultaneously).
-     */
-    var rafPending = false;
-    var pendingMutations = [];
-
     var observer = new MutationObserver(function (mutations) {
       if (!prefersReducedMotion()) {
         return;
       }
 
-      pendingMutations = pendingMutations.concat(mutations);
+      mutations.forEach(function (mutation) {
+        /*
+         * Only respond to Elementor/new DOM changes. Do not blindly re-apply
+         * styles to every style mutation unless the element now actually looks
+         * motion-controlled.
+         */
+        if (mutation.type === 'attributes') {
+          if (
+            mutation.attributeName === 'style' &&
+            shouldRevealElement(mutation.target)
+          ) {
+            revealElement(mutation.target);
+          }
 
-      if (rafPending) {
-        return;
-      }
-
-      rafPending = true;
-
-      requestAnimationFrame(function () {
-        rafPending = false;
-
-        var batch = pendingMutations;
-        pendingMutations = [];
-
-        var reduced = prefersReducedMotion();
-
-        if (!reduced) {
           return;
         }
 
-        batch.forEach(function (mutation) {
-          if (mutation.type === 'attributes') {
-            revealElement(mutation.target, reduced);
-            return;
+        mutation.addedNodes.forEach(function (node) {
+          if (isElement(node)) {
+            revealTree(node);
           }
-
-          mutation.addedNodes.forEach(function (node) {
-            if (isElement(node)) {
-              revealTree(node);
-            }
-          });
         });
       });
     });
@@ -231,28 +240,32 @@
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ['style', 'class']
+      attributeFilter: ['style']
     });
   }
 
-  /**
-   * If someone switches their reduced motion setting while the page is open, applies or remove our updates
-   * @returns 
-   */
   function bindPreferenceChanges() {
-    if (!mql) {
+    if (!window.matchMedia) {
       return;
     }
 
+    var mediaQueryList = window.matchMedia(mediaQuery);
+
     var handleChange = function () {
       markRoot();
-      revealTree(document);
+
+      if (prefersReducedMotion()) {
+        revealTree(document);
+      }
     };
 
-    if (mql.addEventListener) {
-      mql.addEventListener('change', handleChange);
-    } else if (mql.addListener) {
-      mql.addListener(handleChange);
+    if (mediaQueryList.addEventListener) {
+      mediaQueryList.addEventListener('change', handleChange);
+      return;
+    }
+
+    if (mediaQueryList.addListener) {
+      mediaQueryList.addListener(handleChange);
     }
   }
 
@@ -269,12 +282,7 @@
     revealTree(document);
   }
 
-  /*
-   * Elementor wraps its entire init in waitForAnimateFunction(), which defers execution until Motion One is available — potentially well after DOMContentLoaded.
-   * The window.load pass catches elements that Motion One hid during that deferred initialization window.
-   */
   window.addEventListener('load', function () {
     revealTree(document);
   });
-
 })();

@@ -296,21 +296,20 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       wp_add_inline_style(
         'core-a11y-for-elementor',
         '@media (prefers-reduced-motion: reduce) {
-      html.core-a11y-prefers-reduced-motion,
-      html.core-a11y-prefers-reduced-motion * {
-        scroll-behavior: auto !important;
-      }
+  html.core-a11y-prefers-reduced-motion,
+  html.core-a11y-prefers-reduced-motion * {
+    scroll-behavior: auto !important;
+  }
 
-      html.core-a11y-prefers-reduced-motion [data-interaction-id],
-      html.core-a11y-prefers-reduced-motion .e-atomic-element,
-      html.core-a11y-prefers-reduced-motion [data-e-type] {
-        transition-delay: 0s !important;
-        transition-duration: 0.001ms !important;
-        animation-delay: 0s !important;
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-      }
-    }'
+  html.core-a11y-prefers-reduced-motion [data-core-a11y-motion-disabled="true"] {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+  }
+}'
       );
 
     }
