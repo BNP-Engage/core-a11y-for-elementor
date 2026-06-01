@@ -95,7 +95,8 @@ class Lottie_Widget
       $widget_caption = $caption ? '<p class="e-lottie__caption"> ' . esc_html($caption) . '</p>' : '';
       $static_image = isset($settings['static_image']) ? $settings['static_image'] : [];
       $static_image_alt = $static_image['alt'] ?? '';
-      $widget_image = $static_image ? '<img src="' . $static_image['url'] . '" alt=" ' . $static_image_alt . '" class="e-lottie__image" loading="lazy">' : '';
+      $static_image_url = $static_image['url'] ?? '';
+      $widget_image = $static_image_url ? '<img src="' . $static_image_url . '" alt=" ' . $static_image_alt . '" class="e-lottie__image" loading="lazy">' : '';
       $content = '<div class="e-lottie__container"><div class="e-lottie__animation"></div>' . $widget_caption . $widget_image . '</div>';
 
       if (!empty($settings['custom_link']['url']) && 'custom' === $settings['link_to']) {
