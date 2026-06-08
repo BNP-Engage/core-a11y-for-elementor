@@ -132,6 +132,30 @@
       }
     });
 
+    /*
+     * WIDGET: Flip Box
+     * Add role="presentation" attribute to images with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/flip-box.default', function ($scope) {
+      var id = $scope.attr('data-id');
+      var flipBox = $scope.find('.elementor-flip-box');
+      var image = $scope.find('img');
+      var title = $scope.find('.elementor-flip-box__layer__title');
+      var description = $scope.find('.elementor-flip-box__layer__description');
+      if ($scope.hasClass('core-a11y-pres-img-yes')) {
+        image.attr('role', 'presentation');
+      }
+      if (title) {
+        title.attr('id', 'elementor-flip-box__layer__title__'+id)
+        flipBox.attr('aria-labelledby', 'elementor-flip-box__layer__title__'+id)
+      }
+      if (description) {
+        description.attr('id', 'elementor-flip-box__layer__description__'+id)
+        flipBox.attr('aria-describedby', 'elementor-flip-box__layer__description__'+id)
+      }
+    });
+
 
   // End - 	elementor/frontend/init
   });
