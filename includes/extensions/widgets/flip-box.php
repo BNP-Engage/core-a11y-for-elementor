@@ -77,5 +77,7 @@ class Flip_Box_Widget {
       ]
     );
 
+  }
+
 }
 new Flip_Box_Widget();
