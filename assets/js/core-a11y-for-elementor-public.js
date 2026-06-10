@@ -138,7 +138,14 @@
      *
      */
     elementorFrontend.hooks.addAction('frontend/element_ready/flip-box.default', function ($scope) {
+      var loopItem = $scope.closest('.e-loop-item');
+      var loopClasses = loopItem.attr('class').split(/\s+/);
       var id = $scope.attr('data-id');
+      $.each(loopClasses, function(index, item) {
+        if (item.startsWith('e-loop-item-')) {
+          id = item.replace('e-loop-item-','');
+        }
+      });
       var flipBox = $scope.find('.elementor-flip-box');
       var image = $scope.find('img');
       var title = $scope.find('.elementor-flip-box__layer__title');
