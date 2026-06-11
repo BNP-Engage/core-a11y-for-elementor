@@ -376,3 +376,19 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
 
   add_action('plugins_loaded', ['Core_A11Y_For_Elementor_Main', 'instance']);
 }
+
+// function add_attributes_to_elements( $element ) {
+
+// 	if ( ! $element->get_settings( 'core_a11y_aria_label' ) ) {
+// 		return;
+// 	}
+
+// 	$element->add_render_attribute( 'link',
+//     [
+//       'aria-label' => $element->get_settings( 'core_a11y_aria_label' ),
+//       'class' => 'booty'
+//     ]
+//   );
+
+// }
+// add_action( 'elementor/frontend/before_render', 'add_attributes_to_elements' );
