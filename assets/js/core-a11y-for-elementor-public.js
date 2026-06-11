@@ -132,6 +132,30 @@
       }
     });
 
+    /*
+     * WIDGET: Tabs
+     * Add role="region" attribute to the tabs widget to validate the aria-label
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/nested-tabs.default', function ($scope) {
+      var container = $scope.find('.e-n-tabs');
+      if (container) {
+        container.attr('role', 'region');
+      }
+    });
+
+    /*
+     * WIDGET: Accordion
+     * Add role="region" attribute to the accordion widget to validate the aria-label
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/nested-accordion.default', function ($scope) {
+      var container = $scope.find('.e-n-accordion');
+      if (container) {
+        container.attr('role', 'region');
+      }
+    });
+
 
   // End - 	elementor/frontend/init
   });
