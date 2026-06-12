@@ -370,6 +370,9 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       // Widget - Lottie
       require_once(__DIR__ . '/includes/extensions/widgets/lottie.php');
 
+      // Widget - Flip Box
+      require_once(__DIR__ . '/includes/extensions/widgets/flip-box.php');
+
     }
 
   }
