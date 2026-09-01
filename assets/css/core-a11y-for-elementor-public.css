@@ -21,7 +21,8 @@
 
 .core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-cta__content,
 .core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-widget-container,
-.core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-cta {
+.core-a11y-whole-box-hover-yes.elementor-widget-call-to-action .elementor-cta,
+.core-a11y-whole-box-hover-yes.elementor-widget-call-to-action:not(:has(.elementor-widget-container)) {
   overflow: visible;
 }
 .core-a11y-whole-box-hover-yes a::before {
@@ -31,8 +32,8 @@
   z-index: 1;
   border-radius: 6px;
 }
-.core-a11y-whole-box-hover-yes a:focus-visible {
-  outline: none;
+.core-a11y-whole-box-hover-yes a.elementor-cta__button:focus-visible {
+  outline: none !important;
 }
 /* .core-a11y-whole-box-hover-yes a:focus-visible::before {
   outline: 2px solid #35aaa7;
