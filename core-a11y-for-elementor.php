@@ -352,11 +352,17 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       // Widget - Call To Action
       require_once(__DIR__ . '/includes/extensions/widgets/call-to-action.php');
 
+      // Widget - Carousel
+      require_once(__DIR__ . '/includes/extensions/widgets/carousel.php');
+
       // Widget - Form
       require_once(__DIR__ . '/includes/extensions/widgets/form.php');
 
       // Widget - Image
       require_once(__DIR__ . '/includes/extensions/widgets/image.php');
+
+      // Widget - Image Carousel
+      require_once(__DIR__ . '/includes/extensions/widgets/image-carousel.php');
 
       // Widget - Testimonial Carousel
       require_once(__DIR__ . '/includes/extensions/widgets/testimonial-carousel.php');
