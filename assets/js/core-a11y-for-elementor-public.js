@@ -20,6 +20,18 @@
       }
     });
 
+    /*
+     * WIDGET: Loop Carousel
+     * Add role="region" attribute to the tabs widget to validate the aria-label
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/loop-carousel.post', function ($scope) {
+      var widget = $scope.find('.elementor-loop-container');
+      if (widget.length) {
+        widget.attr('role', 'region');
+      }
+    });
+
     // keep track of element that triggered the modal window.
     var previousElement = null;
 
