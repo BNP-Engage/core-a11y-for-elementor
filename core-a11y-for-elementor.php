@@ -241,6 +241,7 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       $this->enqueue_scripts();
       $this->register_extensions_kit();
       $this->register_extensions_widgets();
+      $this->register_custom_dynamic_tags();
     }
 
     /**
@@ -382,6 +383,28 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       // Widget - Nested Tabs
       require_once(__DIR__ . '/includes/extensions/widgets/nested-tabs.php');
 
+    }
+
+    /**
+     * Init Custom Dynamic Tags
+     *
+     * Include custom dynamic tags for use within Elementor
+     *
+     * @since 1.0.0
+     *
+     * @access public
+     */
+    public function register_custom_dynamic_tags() {
+      add_action( 'elementor/dynamic_tags/register', function( $dynamic_tags_manager ) {
+        $dynamic_tags_manager->register_group( 'core-a11y-for-elementor', [
+          'title' => 'Core A11Y' 
+        ] );
+        
+        // Text with aria-label
+        include_once( __DIR__ . '/includes/extensions/dynamic/text-aria-label.php' );
+        $dynamic_tags_manager->register( new Core_A11y_Text_Aria_Label );
+
+      } );
     }
 
   }
