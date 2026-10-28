@@ -199,6 +199,41 @@
       }
     });
 
+    /*
+     * GLOBAL: Regions
+     * Add aria labels to regions
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/global', function ($scope) {
+      labelWithin($scope[0]);
+    });
+
+    var LANDMARKS = '[role="region"], section:not([role="presentation"]), aside, [role="complementary"], article';
+    var MAX_LABEL = 80;
+    var uid = 0;
+
+    function labelLandmark(lm) {
+      if (lm.hasAttribute('aria-label') || lm.hasAttribute('aria-labelledby')) return;
+      var selector = lm.matches('article') ? 'h2, h3, h4, h5, h6' : 'h2';
+      var headings = lm.querySelectorAll(selector);
+      for (var i = 0; i < headings.length; i++) {
+        var h = headings[i];
+        if (h.closest(LANDMARKS) !== lm) continue;
+        var text = h.textContent.trim();
+        if (!text) continue;
+        if (h.closest('[aria-hidden="true"]')) continue;
+        if (text.length > MAX_LABEL) return;
+        if (!h.id) h.id = 'auto-landmark-heading-' + (++uid);
+        lm.setAttribute('aria-labelledby', h.id);
+        return;
+      }
+    }
+
+    function labelWithin(root) {
+      if (!root) return;
+      if (root.matches && root.matches(LANDMARKS)) labelLandmark(root);
+      root.querySelectorAll(LANDMARKS).forEach(labelLandmark);
+    }
 
   // End - 	elementor/frontend/init
   });
