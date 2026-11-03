@@ -42,6 +42,7 @@ class Section_Style extends Module {
     
     // Register change to Section widget
     add_action( 'elementor/element/section/section_background/before_section_end', array( $this, 'tweak_section_widget' ) );
+    add_action( 'elementor/element/container/section_background/before_section_end', array( $this, 'tweak_section_widget' ) );
 
   }
 
@@ -95,6 +96,23 @@ class Section_Style extends Module {
           'core_a11y_video_reduced_motion!' => ['yes'],
           'background_background' => ['video']
         ],
+      ]
+    );
+
+    // SWITCHER - Show Controls
+    $element->add_control(
+      'core_a11y_video_controls',
+      [
+        'label' => __( 'Show Controls', 'core-a11y-for-elementor'),
+        'type' => \Elementor\Controls_Manager::SWITCHER,
+        'label_on' => __( 'Yes', 'core-a11y-for-elementor'),
+        'label_off' => __( 'No', 'core-a11y-for-elementor'),
+        'return_value' => 'yes',
+        'default' => 'yes',
+        'prefix_class' => 'core-a11y-video-bg-controls-',
+        'condition' => [
+          'background_background' => ['video']
+        ]
       ]
     );
 
