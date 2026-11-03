@@ -125,6 +125,26 @@
   top: 50%;
 }
 
+.core-a11y-video-bg-controls-yes .play-pause-btn {
+  position: absolute;
+  z-index: 10;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .5rem;
+  background-color: oklch(16.2474% 0.058357 277.70874 / 0.6);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+.core-a11y-video-bg-controls-yes .hidden {
+  display: none;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
 

@@ -235,6 +235,124 @@
       root.querySelectorAll(LANDMARKS).forEach(labelLandmark);
     }
 
+    /*
+     * GLOBAL: Container
+     * Add play/puase button to sections with video backgrounds
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/container', function ($scope) {
+      if ($scope.hasClass('core-a11y-video-bg-controls-yes')) {
+        addPausePlayButtons($scope)
+      }
+    });
+
+    function addPausePlayButtons(section) {
+      var container = section.find('.elementor-background-video-container')
+      var elementSettings = JSON.parse(section[0].getAttribute('data-settings'))
+      var videoLink = elementSettings.background_video_link;
+      var videoType = ''
+      var video = []
+      if (-1 !== videoLink.indexOf('vimeo.com')) {
+        videoType = 'vimeo';
+      } else if (videoLink.match(/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/)) {
+        videoType = 'youtube';
+      }
+      var checkVideoReady = setInterval(function() {
+        if ( videoType == 'youtube' || videoType == 'vimeo' ) {
+          video = container.find('iframe')
+        } else {
+          video = container.find('video')
+        }
+        if (video.length) {
+          clearInterval(checkVideoReady);
+          section.append('<button class="play-pause-btn"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" class="pause-btn" aria-label="Pause Video"><g fill="#fff"><path d="M4.8 0H1.2C.48 0 0 .571 0 1.429v17.142C0 19.429.48 20 1.2 20h3.6c.72 0 1.2-.571 1.2-1.429V1.429C6 .571 5.52 0 4.8 0" data-name="Path 464"></path><path d="M16.8 0h-3.6c-.72 0-1.2.571-1.2 1.429v17.142c0 .857.48 1.429 1.2 1.429h3.6c.72 0 1.2-.571 1.2-1.429V1.429C18 .571 17.52 0 16.8 0" data-name="Path 465"></path></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="14.969" height="20" class="play-btn hidden" aria-label="Play Video"><path fill="#fff" d="M14.5 9 2 .25a1.249 1.249 0 0 0-2 1v17.5a1.249 1.249 0 0 0 2 1L14.5 11a1.3 1.3 0 0 0 0-2" data-name="Path 466"></path></svg></button>')
+          var playButton = section.find('.play-btn')
+          var pauseButton = section.find('.pause-btn')
+        
+          $( '.play-pause-btn' ).click( function( e ) {
+            var isPaused = false
+            if ( videoType = 'youtube') {
+              var player = video[0]
+              // Wait for iframe to load, then register
+              player.addEventListener('load', registerYouTubeListener(video));
+              // Listen for messages coming back from the YouTube iframe
+              window.addEventListener('message', function (event) {
+                // Security check: verify origin is YouTube
+                if (event.origin !== 'https://www.youtube.com') return;
+
+                try {
+                  const data = JSON.parse(event.data);
+
+                  // Check if it's a state change event
+                  if (data.event === 'onStateChange' || (data.info && data.info !== undefined)) {
+                    // YT Player States:
+                    // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+                    const playerState = data.info.playbackRate;
+                    console.log(playerState)
+
+                    if (playerState === 2) {
+                      isPaused = true
+                    } else if (playerState === 1) {
+                      isPaused = false
+                    }
+                  }
+                } catch (e) {
+                  // Ignore non-JSON messages
+                }
+              });
+            } else if ( videoType == 'vimeo' ) {
+              var player = new Vimeo.Player(video);
+              player.getPaused().then(function(paused) {
+                isPaused = paused ? true : false;
+              })
+            } else {
+              var player = video[0]
+              isPaused = video[0].paused ? true : false;
+            }
+            if (isPaused) {
+              if ( videoType == 'youtube' ) {
+                player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+              } else {
+                player.play()
+              }
+              pauseButton.removeClass('hidden')
+              playButton.addClass('hidden')
+            } else {
+              if ( videoType == 'youtube' ) {
+                player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+              } else {
+                player.pause()
+              }
+              playButton.removeClass('hidden')
+              pauseButton.addClass('hidden')
+            }
+          });
+        }
+      }, 100)
+    }
+
+    // Function to tell the YouTube iframe to start sending events
+    function registerYouTubeListener(iframe) {
+      var videoID = iframe.attr('id')
+      // 1. Tell iframe we are listening
+      iframe[0].contentWindow.postMessage(
+        JSON.stringify({ event: 'listening', id: videoID, channel: 'widget' }),
+        'https://www.youtube.com'
+      );
+
+      // 2. Subscribe to the 'onStateChange' event
+      iframe[0].contentWindow.postMessage(
+        JSON.stringify({
+          event: 'command',
+          func: 'addEventListener',
+          args: ['onStateChange'],
+          id: 'yt-player',
+          channel: 'widget'
+        }),
+        'https://www.youtube.com'
+      );
+    }
+
   // End - 	elementor/frontend/init
   });
 

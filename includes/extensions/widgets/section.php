@@ -99,6 +99,23 @@ class Section_Style extends Module {
       ]
     );
 
+    // SWITCHER - Show Controls
+    $element->add_control(
+      'core_a11y_video_controls',
+      [
+        'label' => __( 'Show Controls', 'core-a11y-for-elementor'),
+        'type' => \Elementor\Controls_Manager::SWITCHER,
+        'label_on' => __( 'Yes', 'core-a11y-for-elementor'),
+        'label_off' => __( 'No', 'core-a11y-for-elementor'),
+        'return_value' => 'yes',
+        'default' => 'yes',
+        'prefix_class' => 'core-a11y-video-bg-controls-',
+        'condition' => [
+          'background_background' => ['video']
+        ]
+      ]
+    );
+
 		$element->end_injection();
 	}
 
