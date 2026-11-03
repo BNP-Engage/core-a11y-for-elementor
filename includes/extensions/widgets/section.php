@@ -42,6 +42,7 @@ class Section_Style extends Module {
     
     // Register change to Section widget
     add_action( 'elementor/element/section/section_background/before_section_end', array( $this, 'tweak_section_widget' ) );
+    add_action( 'elementor/element/container/section_background/before_section_end', array( $this, 'tweak_section_widget' ) );
 
   }
 
