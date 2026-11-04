@@ -268,11 +268,15 @@
           section.append('<button class="play-pause-btn"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" class="pause-btn" aria-label="Pause Video"><g fill="#fff"><path d="M4.8 0H1.2C.48 0 0 .571 0 1.429v17.142C0 19.429.48 20 1.2 20h3.6c.72 0 1.2-.571 1.2-1.429V1.429C6 .571 5.52 0 4.8 0" data-name="Path 464"></path><path d="M16.8 0h-3.6c-.72 0-1.2.571-1.2 1.429v17.142c0 .857.48 1.429 1.2 1.429h3.6c.72 0 1.2-.571 1.2-1.429V1.429C18 .571 17.52 0 16.8 0" data-name="Path 465"></path></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="14.969" height="20" class="play-btn hidden" aria-label="Play Video"><path fill="#fff" d="M14.5 9 2 .25a1.249 1.249 0 0 0-2 1v17.5a1.249 1.249 0 0 0 2 1L14.5 11a1.3 1.3 0 0 0 0-2" data-name="Path 466"></path></svg></button>')
           var playButton = section.find('.play-btn')
           var pauseButton = section.find('.pause-btn')
-        
-          $( '.play-pause-btn' ).click( function( e ) {
-            var isPaused = false
-            if ( videoType = 'youtube') {
-              var player = video[0]
+          var button = section.find('.play-pause-btn')
+          var isPaused = false
+          if ( videoType == 'vimeo' ) {
+            var player = new Vimeo.Player(video);
+          } else {
+            var player = video[0]
+          }
+          button.click( function( e ) {
+            if ( videoType == 'youtube') {
               // Wait for iframe to load, then register
               player.addEventListener('load', registerYouTubeListener(video));
               // Listen for messages coming back from the YouTube iframe
@@ -288,7 +292,6 @@
                     // YT Player States:
                     // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
                     const playerState = data.info.playbackRate;
-                    console.log(playerState)
 
                     if (playerState === 2) {
                       isPaused = true
@@ -301,13 +304,11 @@
                 }
               });
             } else if ( videoType == 'vimeo' ) {
-              var player = new Vimeo.Player(video);
               player.getPaused().then(function(paused) {
                 isPaused = paused ? true : false;
               })
             } else {
-              var player = video[0]
-              isPaused = video[0].paused ? true : false;
+              isPaused = player.paused ? true : false;
             }
             if (isPaused) {
               if ( videoType == 'youtube' ) {
