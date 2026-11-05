@@ -279,6 +279,34 @@
           } else {
             var player = video[0]
           }
+          // Show the icon/label that matches isPaused
+          function updateButton() {
+            if (isPaused) {
+              playButton.removeClass('hidden')
+              pauseButton.addClass('hidden')
+              button.attr('aria-label', 'Play video')
+            } else {
+              pauseButton.removeClass('hidden')
+              playButton.addClass('hidden')
+              button.attr('aria-label', 'Pause video')
+            }
+          }
+          // Keep isPaused and the button in step with what the video is really doing,
+          // including the initial state (autoplay can be blocked) and changes made
+          // outside our button.
+          function setPaused(paused) {
+            isPaused = paused
+            updateButton()
+          }
+          if ( videoType == 'vimeo' ) {
+            player.on('play', function () { setPaused(false) })
+            player.on('pause', function () { setPaused(true) })
+            player.getPaused().then(setPaused)
+          } else if ( videoType != 'youtube' ) {
+            player.addEventListener('play', function () { setPaused(false) })
+            player.addEventListener('pause', function () { setPaused(true) })
+            setPaused(player.paused)
+          }
           if ( videoType == 'youtube' ) {
             // Register once (not on every click): subscribe to the iframe's state
             // events and track them. Registering on 'load' covers an iframe that
@@ -303,9 +331,9 @@
                   const playerState = data.info.playerState;
 
                   if (playerState === 2) {
-                    isPaused = true
+                    setPaused(true)
                   } else if (playerState === 1) {
-                    isPaused = false
+                    setPaused(false)
                   }
                 }
               } catch (e) {
@@ -336,18 +364,14 @@
                 } else {
                   player.play()
                 }
-                pauseButton.removeClass('hidden')
-                playButton.addClass('hidden')
-                button.attr('aria-label', 'Pause video')
+                setPaused(false)
               } else {
                 if ( videoType == 'youtube' ) {
                   player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 } else {
                   player.pause()
                 }
-                playButton.removeClass('hidden')
-                pauseButton.addClass('hidden')
-                button.attr('aria-label', 'Play video')
+                setPaused(true)
               }
             }
           });
