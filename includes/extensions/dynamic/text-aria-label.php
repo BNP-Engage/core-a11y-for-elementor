@@ -61,7 +61,7 @@ class Core_A11y_Text_Aria_Label extends \Elementor\Core\DynamicTags\Tag {
     $value = '';
 
     if ( !empty($pre_sr_text) ) {
-			$value .= '<span class="sr-only">'.esc_html($pre_sr_text).'</span>';
+			$value .= '<span class="elementor-screen-only">'.esc_html($pre_sr_text).'</span>';
 		}
 
     if ( !empty($visible_text) ) {
@@ -69,7 +69,7 @@ class Core_A11y_Text_Aria_Label extends \Elementor\Core\DynamicTags\Tag {
 		}
 
     if ( !empty($post_sr_text) ) {
-			$value .= '<span class="sr-only">'.esc_html($post_sr_text).'</span>';
+			$value .= '<span class="elementor-screen-only">'.esc_html($post_sr_text).'</span>';
 		}
 
 		if ( !empty($value) ) {
