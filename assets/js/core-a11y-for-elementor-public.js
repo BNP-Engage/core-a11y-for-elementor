@@ -269,7 +269,7 @@
         }
         if (video.length) {
           clearInterval(checkVideoReady);
-          section.append('<button class="play-pause-btn"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" class="pause-btn" aria-label="Pause Video"><g fill="#fff"><path d="M4.8 0H1.2C.48 0 0 .571 0 1.429v17.142C0 19.429.48 20 1.2 20h3.6c.72 0 1.2-.571 1.2-1.429V1.429C6 .571 5.52 0 4.8 0" data-name="Path 464"></path><path d="M16.8 0h-3.6c-.72 0-1.2.571-1.2 1.429v17.142c0 .857.48 1.429 1.2 1.429h3.6c.72 0 1.2-.571 1.2-1.429V1.429C18 .571 17.52 0 16.8 0" data-name="Path 465"></path></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="14.969" height="20" class="play-btn hidden" aria-label="Play Video"><path fill="#fff" d="M14.5 9 2 .25a1.249 1.249 0 0 0-2 1v17.5a1.249 1.249 0 0 0 2 1L14.5 11a1.3 1.3 0 0 0 0-2" data-name="Path 466"></path></svg></button>')
+          section.append('<button type="button" class="play-pause-btn" aria-label="Pause video"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" class="pause-btn" aria-hidden="true" focusable="false"><g fill="#fff"><path d="M4.8 0H1.2C.48 0 0 .571 0 1.429v17.142C0 19.429.48 20 1.2 20h3.6c.72 0 1.2-.571 1.2-1.429V1.429C6 .571 5.52 0 4.8 0" data-name="Path 464"></path><path d="M16.8 0h-3.6c-.72 0-1.2.571-1.2 1.429v17.142c0 .857.48 1.429 1.2 1.429h3.6c.72 0 1.2-.571 1.2-1.429V1.429C18 .571 17.52 0 16.8 0" data-name="Path 465"></path></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="14.969" height="20" class="play-btn hidden" aria-hidden="true" focusable="false"><path fill="#fff" d="M14.5 9 2 .25a1.249 1.249 0 0 0-2 1v17.5a1.249 1.249 0 0 0 2 1L14.5 11a1.3 1.3 0 0 0 0-2" data-name="Path 466"></path></svg></button>')
           var playButton = section.find('.play-btn')
           var pauseButton = section.find('.pause-btn')
           var button = section.find('.play-pause-btn')
@@ -338,6 +338,7 @@
                 }
                 pauseButton.removeClass('hidden')
                 playButton.addClass('hidden')
+                button.attr('aria-label', 'Pause video')
               } else {
                 if ( videoType == 'youtube' ) {
                   player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
@@ -346,6 +347,7 @@
                 }
                 playButton.removeClass('hidden')
                 pauseButton.addClass('hidden')
+                button.attr('aria-label', 'Play video')
               }
             }
           });
