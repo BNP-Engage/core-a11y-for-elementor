@@ -291,7 +291,7 @@
                   if (data.event === 'onStateChange' || (data.info && data.info !== undefined)) {
                     // YT Player States:
                     // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
-                    const playerState = data.info.playbackRate;
+                    const playerState = data.info.playerState;
 
                     if (playerState === 2) {
                       isPaused = true
