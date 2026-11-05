@@ -289,6 +289,9 @@
             window.addEventListener('message', function (event) {
               // Security check: verify origin is YouTube
               if (event.origin !== 'https://www.youtube.com') return;
+              // Only react to messages from this section's own iframe, so two
+              // background videos on one page don't change each other's state.
+              if (event.source !== player.contentWindow) return;
 
               try {
                 const data = JSON.parse(event.data);
