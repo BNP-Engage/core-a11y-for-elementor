@@ -304,28 +304,36 @@
                 }
               });
             } else if ( videoType == 'vimeo' ) {
+              // getPaused() is async, so toggle only once the promise resolves.
+              // Otherwise the toggle below would run with the previous click's state.
               player.getPaused().then(function(paused) {
                 isPaused = paused ? true : false;
+                togglePlayback()
               })
+              return
             } else {
               isPaused = player.paused ? true : false;
             }
-            if (isPaused) {
-              if ( videoType == 'youtube' ) {
-                player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            togglePlayback()
+
+            function togglePlayback() {
+              if (isPaused) {
+                if ( videoType == 'youtube' ) {
+                  player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                } else {
+                  player.play()
+                }
+                pauseButton.removeClass('hidden')
+                playButton.addClass('hidden')
               } else {
-                player.play()
+                if ( videoType == 'youtube' ) {
+                  player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                } else {
+                  player.pause()
+                }
+                playButton.removeClass('hidden')
+                pauseButton.addClass('hidden')
               }
-              pauseButton.removeClass('hidden')
-              playButton.addClass('hidden')
-            } else {
-              if ( videoType == 'youtube' ) {
-                player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-              } else {
-                player.pause()
-              }
-              playButton.removeClass('hidden')
-              pauseButton.addClass('hidden')
             }
           });
         }
