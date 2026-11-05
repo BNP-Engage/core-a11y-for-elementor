@@ -241,7 +241,11 @@
      *
      */
     elementorFrontend.hooks.addAction('frontend/element_ready/container', function ($scope) {
-      if ($scope.hasClass('core-a11y-video-bg-controls-yes')) {
+      // When the video is hidden for reduced motion (see the public CSS), there is
+      // nothing to control, so don't add a button that would play an invisible video.
+      var videoHiddenForReducedMotion = $scope.hasClass('core-a11y-hide-video-bg-yes') &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if ($scope.hasClass('core-a11y-video-bg-controls-yes') && !videoHiddenForReducedMotion) {
         addPausePlayButtons($scope)
       }
     });
