@@ -279,34 +279,40 @@
           } else {
             var player = video[0]
           }
+          if ( videoType == 'youtube' ) {
+            // Register once (not on every click): subscribe to the iframe's state
+            // events and track them. Registering on 'load' covers an iframe that
+            // isn't ready yet; calling it now covers one that already is.
+            player.addEventListener('load', function () { registerYouTubeListener(video) });
+            registerYouTubeListener(video)
+            // Listen for messages coming back from the YouTube iframe
+            window.addEventListener('message', function (event) {
+              // Security check: verify origin is YouTube
+              if (event.origin !== 'https://www.youtube.com') return;
+
+              try {
+                const data = JSON.parse(event.data);
+
+                // Check if it's a state change event
+                if (data.event === 'onStateChange' || (data.info && data.info !== undefined)) {
+                  // YT Player States:
+                  // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+                  const playerState = data.info.playerState;
+
+                  if (playerState === 2) {
+                    isPaused = true
+                  } else if (playerState === 1) {
+                    isPaused = false
+                  }
+                }
+              } catch (e) {
+                // Ignore non-JSON messages
+              }
+            });
+          }
           button.click( function( e ) {
             if ( videoType == 'youtube') {
-              // Wait for iframe to load, then register
-              player.addEventListener('load', registerYouTubeListener(video));
-              // Listen for messages coming back from the YouTube iframe
-              window.addEventListener('message', function (event) {
-                // Security check: verify origin is YouTube
-                if (event.origin !== 'https://www.youtube.com') return;
-
-                try {
-                  const data = JSON.parse(event.data);
-
-                  // Check if it's a state change event
-                  if (data.event === 'onStateChange' || (data.info && data.info !== undefined)) {
-                    // YT Player States:
-                    // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
-                    const playerState = data.info.playerState;
-
-                    if (playerState === 2) {
-                      isPaused = true
-                    } else if (playerState === 1) {
-                      isPaused = false
-                    }
-                  }
-                } catch (e) {
-                  // Ignore non-JSON messages
-                }
-              });
+              // isPaused is kept up to date by the message listener above
             } else if ( videoType == 'vimeo' ) {
               // getPaused() is async, so toggle only once the promise resolves.
               // Otherwise the toggle below would run with the previous click's state.
