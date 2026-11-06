@@ -241,7 +241,11 @@
      *
      */
     elementorFrontend.hooks.addAction('frontend/element_ready/container', function ($scope) {
-      if ($scope.hasClass('core-a11y-video-bg-controls-yes')) {
+      // When the video is hidden for reduced motion (see the public CSS), there is
+      // nothing to control, so don't add a button that would play an invisible video.
+      var videoHiddenForReducedMotion = $scope.hasClass('core-a11y-hide-video-bg-yes') &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if ($scope.hasClass('core-a11y-video-bg-controls-yes') && !videoHiddenForReducedMotion) {
         addPausePlayButtons($scope)
       }
     });
@@ -265,66 +269,110 @@
         }
         if (video.length) {
           clearInterval(checkVideoReady);
-          section.append('<button class="play-pause-btn"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" class="pause-btn" aria-label="Pause Video"><g fill="#fff"><path d="M4.8 0H1.2C.48 0 0 .571 0 1.429v17.142C0 19.429.48 20 1.2 20h3.6c.72 0 1.2-.571 1.2-1.429V1.429C6 .571 5.52 0 4.8 0" data-name="Path 464"></path><path d="M16.8 0h-3.6c-.72 0-1.2.571-1.2 1.429v17.142c0 .857.48 1.429 1.2 1.429h3.6c.72 0 1.2-.571 1.2-1.429V1.429C18 .571 17.52 0 16.8 0" data-name="Path 465"></path></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="14.969" height="20" class="play-btn hidden" aria-label="Play Video"><path fill="#fff" d="M14.5 9 2 .25a1.249 1.249 0 0 0-2 1v17.5a1.249 1.249 0 0 0 2 1L14.5 11a1.3 1.3 0 0 0 0-2" data-name="Path 466"></path></svg></button>')
+          section.append('<button type="button" class="play-pause-btn" aria-label="Pause video"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" class="pause-btn" aria-hidden="true" focusable="false"><g fill="#fff"><path d="M4.8 0H1.2C.48 0 0 .571 0 1.429v17.142C0 19.429.48 20 1.2 20h3.6c.72 0 1.2-.571 1.2-1.429V1.429C6 .571 5.52 0 4.8 0" data-name="Path 464"></path><path d="M16.8 0h-3.6c-.72 0-1.2.571-1.2 1.429v17.142c0 .857.48 1.429 1.2 1.429h3.6c.72 0 1.2-.571 1.2-1.429V1.429C18 .571 17.52 0 16.8 0" data-name="Path 465"></path></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="14.969" height="20" class="play-btn hidden" aria-hidden="true" focusable="false"><path fill="#fff" d="M14.5 9 2 .25a1.249 1.249 0 0 0-2 1v17.5a1.249 1.249 0 0 0 2 1L14.5 11a1.3 1.3 0 0 0 0-2" data-name="Path 466"></path></svg></button>')
           var playButton = section.find('.play-btn')
           var pauseButton = section.find('.pause-btn')
-        
-          $( '.play-pause-btn' ).click( function( e ) {
-            var isPaused = false
-            if ( videoType = 'youtube') {
-              var player = video[0]
-              // Wait for iframe to load, then register
-              player.addEventListener('load', registerYouTubeListener(video));
-              // Listen for messages coming back from the YouTube iframe
-              window.addEventListener('message', function (event) {
-                // Security check: verify origin is YouTube
-                if (event.origin !== 'https://www.youtube.com') return;
-
-                try {
-                  const data = JSON.parse(event.data);
-
-                  // Check if it's a state change event
-                  if (data.event === 'onStateChange' || (data.info && data.info !== undefined)) {
-                    // YT Player States:
-                    // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
-                    const playerState = data.info.playbackRate;
-                    console.log(playerState)
-
-                    if (playerState === 2) {
-                      isPaused = true
-                    } else if (playerState === 1) {
-                      isPaused = false
-                    }
-                  }
-                } catch (e) {
-                  // Ignore non-JSON messages
-                }
-              });
-            } else if ( videoType == 'vimeo' ) {
-              var player = new Vimeo.Player(video);
-              player.getPaused().then(function(paused) {
-                isPaused = paused ? true : false;
-              })
-            } else {
-              var player = video[0]
-              isPaused = video[0].paused ? true : false;
-            }
+          var button = section.find('.play-pause-btn')
+          var isPaused = false
+          if ( videoType == 'vimeo' ) {
+            var player = new Vimeo.Player(video);
+          } else {
+            var player = video[0]
+          }
+          // Show the icon/label that matches isPaused
+          function updateButton() {
             if (isPaused) {
-              if ( videoType == 'youtube' ) {
-                player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-              } else {
-                player.play()
-              }
-              pauseButton.removeClass('hidden')
-              playButton.addClass('hidden')
-            } else {
-              if ( videoType == 'youtube' ) {
-                player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-              } else {
-                player.pause()
-              }
               playButton.removeClass('hidden')
               pauseButton.addClass('hidden')
+              button.attr('aria-label', 'Play video')
+            } else {
+              pauseButton.removeClass('hidden')
+              playButton.addClass('hidden')
+              button.attr('aria-label', 'Pause video')
+            }
+          }
+          // Keep isPaused and the button in step with what the video is really doing,
+          // including the initial state (autoplay can be blocked) and changes made
+          // outside our button.
+          function setPaused(paused) {
+            isPaused = paused
+            updateButton()
+          }
+          if ( videoType == 'vimeo' ) {
+            player.on('play', function () { setPaused(false) })
+            player.on('pause', function () { setPaused(true) })
+            player.getPaused().then(setPaused)
+          } else if ( videoType != 'youtube' ) {
+            player.addEventListener('play', function () { setPaused(false) })
+            player.addEventListener('pause', function () { setPaused(true) })
+            setPaused(player.paused)
+          }
+          if ( videoType == 'youtube' ) {
+            // Register once (not on every click): subscribe to the iframe's state
+            // events and track them. Registering on 'load' covers an iframe that
+            // isn't ready yet; calling it now covers one that already is.
+            player.addEventListener('load', function () { registerYouTubeListener(video) });
+            registerYouTubeListener(video)
+            // Listen for messages coming back from the YouTube iframe
+            window.addEventListener('message', function (event) {
+              // Security check: verify origin is YouTube
+              if (event.origin !== 'https://www.youtube.com') return;
+              // Only react to messages from this section's own iframe, so two
+              // background videos on one page don't change each other's state.
+              if (event.source !== player.contentWindow) return;
+
+              try {
+                const data = JSON.parse(event.data);
+
+                // Check if it's a state change event
+                if (data.event === 'onStateChange' || (data.info && data.info !== undefined)) {
+                  // YT Player States:
+                  // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+                  const playerState = data.info.playerState;
+
+                  if (playerState === 2) {
+                    setPaused(true)
+                  } else if (playerState === 1) {
+                    setPaused(false)
+                  }
+                }
+              } catch (e) {
+                // Ignore non-JSON messages
+              }
+            });
+          }
+          button.click( function( e ) {
+            if ( videoType == 'youtube') {
+              // isPaused is kept up to date by the message listener above
+            } else if ( videoType == 'vimeo' ) {
+              // getPaused() is async, so toggle only once the promise resolves.
+              // Otherwise the toggle below would run with the previous click's state.
+              player.getPaused().then(function(paused) {
+                isPaused = paused ? true : false;
+                togglePlayback()
+              })
+              return
+            } else {
+              isPaused = player.paused ? true : false;
+            }
+            togglePlayback()
+
+            function togglePlayback() {
+              if (isPaused) {
+                if ( videoType == 'youtube' ) {
+                  player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                } else {
+                  player.play()
+                }
+                setPaused(false)
+              } else {
+                if ( videoType == 'youtube' ) {
+                  player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                } else {
+                  player.pause()
+                }
+                setPaused(true)
+              }
             }
           });
         }
