@@ -144,6 +144,44 @@
       }
     });
 
+    function hideIcon($scope) {
+      var image = $scope.find('svg');
+      if ($scope.hasClass('core-a11y-pres-img-yes')) {
+        image.attr('aria-hidden', 'true');
+        var title = image.find('title')
+        if (title) {
+          title.remove()
+        }
+      }
+    }
+
+    /*
+     * WIDGET: Button
+     * Add aria-hidden="true" attribute to SVGs with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/button.default', function ($scope) {
+      hideIcon($scope)
+    });
+
+    /*
+     * WIDGET: Icon
+     * Add aria-hidden="true" attribute to SVGs with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/icon.default', function ($scope) {
+      hideIcon($scope)
+    });
+
+    /*
+     * WIDGET: Icon Box
+     * Add aria-hidden="true" attribute to SVGs with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/icon-box.default', function ($scope) {
+      hideIcon($scope)
+    });
+
     /*
      * WIDGET: Tabs
      * Add role="region" attribute to the tabs widget to validate the aria-label

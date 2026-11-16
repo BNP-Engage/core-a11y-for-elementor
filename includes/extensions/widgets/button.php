@@ -39,8 +39,47 @@ class Buttons_Widget {
     // Prefix for all new controls
     $this->prefix = 'core_a11y_';
 
+    // Register New controls for Button Widget icon
+    add_action( 'elementor/element/button/section_button/before_section_end', [ $this, 'register_new_icon_controls' ], 10, 2 );
+
     // Register New controls for Button widget Accessibility
     add_action( 'elementor/element/button/section_style/before_section_end', [ $this, 'register_new_style_controls' ], 10, 2 );
+
+  }
+
+  /**
+   * Register presentation image control.
+   *
+   * @param Controls_Stack $element Elementor element.
+   * @param array         $args Section arguments.
+   */
+  public function register_new_icon_controls( Controls_Stack $element, $args ) {
+
+    $element->start_injection(
+      array(
+        'of' => 'selected_icon',
+        'at' => 'after',
+      )
+    );
+    // do_action( 'qm/debug', $element );
+
+    // SWITCHER - Presentation Image
+    $element->add_control(
+      $this->prefix.'presentation_image',
+      [
+        'label' => __( 'Presentation Image', 'core-a11y-for-elementor'),
+        'description' => __( 'Select Yes to add the role of \'presentation\' to purely decorative images.', 'core-a11y-for-elementor'),
+        'type' => \Elementor\Controls_Manager::SWITCHER,
+        'label_on' => __( 'Yes', 'core-a11y-for-elementor'),
+        'label_off' => __( 'No', 'core-a11y-for-elementor'),
+        'return_value' => 'yes',
+        'default' => 'no',
+        'prefix_class' => 'core-a11y-pres-img-',
+        'condition' => [
+          'selected_icon[library]' => 'svg'
+        ],
+      ]
+    );
 
   }
 

@@ -39,13 +39,13 @@ class Flip_Box_Widget {
     // Prefix for all new controls
     $this->prefix = 'core_a11y_';
 
-    // Register New controls for Image widget height
+    // Register New controls for Flip Box Widget
     add_action( 'elementor/element/flip-box/section_side_a_content/before_section_end', [ $this, 'register_new_image_controls' ], 10, 2 );
 
   }
 
   /**
-   * Register Image widget height control.
+   * Register presentation image control.
    *
    * @param Controls_Stack $element Elementor element.
    * @param array         $args Section arguments.
@@ -53,11 +53,11 @@ class Flip_Box_Widget {
   public function register_new_image_controls( Controls_Stack $element, $args ) {
 
     $element->start_injection(
-			array(
-				'of' => 'image_size',
-				'at' => 'after',
-			)
-		);
+      array(
+        'of' => 'image_size',
+        'at' => 'after',
+      )
+    );
 
     // SWITCHER - Presentation Image
     $element->add_control(
@@ -72,8 +72,8 @@ class Flip_Box_Widget {
         'default' => 'no',
         'prefix_class' => 'core-a11y-pres-img-',
         'condition' => [
-					'graphic_element' => 'image',
-				],
+          'graphic_element' => 'image'
+        ],
       ]
     );
 
