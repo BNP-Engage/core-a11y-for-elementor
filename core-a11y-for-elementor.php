@@ -383,6 +383,9 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       // Widget - Nested Tabs
       require_once(__DIR__ . '/includes/extensions/widgets/nested-tabs.php');
 
+      // Widget - Icon / Icon Box
+      require_once(__DIR__ . '/includes/extensions/widgets/icon-icon-box.php');
+
     }
 
     /**

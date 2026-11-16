@@ -22,13 +22,16 @@
 
     /*
      * WIDGET: Loop Carousel
-     * Add role="region" attribute to the tabs widget to validate the aria-label
+     * The carousel is a region, and a region needs a name. Use the heading just
+     * before the widget (e.g. "Featured Projects"). With no such heading, drop
+     * the role: an unnamed region is a landmark screen readers cannot describe.
      *
      */
     elementorFrontend.hooks.addAction('frontend/element_ready/loop-carousel.post', function ($scope) {
       var widget = $scope.find('.elementor-loop-container');
       if (widget.length) {
         widget.attr('role', 'region');
+        nameCarouselRegion($scope[0], widget[0]);
       }
     });
 
@@ -144,6 +147,53 @@
       }
     });
 
+    function hideIcon($scope) {
+      if (!$scope.hasClass('core-a11y-pres-img-yes')) {
+        return;
+      }
+      $scope.find('svg').each(function () {
+        var $svg = $(this);
+        // An icon that is a link's only content is its accessible name. Hiding it
+        // would leave an empty link, so leave it alone.
+        var $control = $svg.closest('a, button');
+        if ($control.length && !$control.attr('aria-label') && !$control.attr('aria-labelledby')) {
+          var otherText = $control.clone().find('svg').remove().end().text().trim();
+          if (!otherText) {
+            return;
+          }
+        }
+        $svg.attr('aria-hidden', 'true');
+        $svg.find('title').remove();
+      });
+    }
+
+    /*
+     * WIDGET: Button
+     * Add aria-hidden="true" attribute to SVGs with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/button.default', function ($scope) {
+      hideIcon($scope)
+    });
+
+    /*
+     * WIDGET: Icon
+     * Add aria-hidden="true" attribute to SVGs with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/icon.default', function ($scope) {
+      hideIcon($scope)
+    });
+
+    /*
+     * WIDGET: Icon Box
+     * Add aria-hidden="true" attribute to SVGs with that control set to 'Yes'
+     *
+     */
+    elementorFrontend.hooks.addAction('frontend/element_ready/icon-box.default', function ($scope) {
+      hideIcon($scope)
+    });
+
     /*
      * WIDGET: Tabs
      * Add role="region" attribute to the tabs widget to validate the aria-label
@@ -227,6 +277,36 @@
         lm.setAttribute('aria-labelledby', h.id);
         return;
       }
+    }
+
+    /*
+     * Finds the heading that introduces a widget: the nearest earlier sibling
+     * widget that is, or contains, a visible heading. Stops after a few
+     * siblings so it never borrows a heading from an unrelated block.
+     */
+    function findPrecedingHeading(widgetEl) {
+      var sibling = widgetEl.previousElementSibling;
+      for (var hops = 0; sibling && hops < 3; hops++, sibling = sibling.previousElementSibling) {
+        var candidates = sibling.matches('h1, h2, h3, h4, h5, h6') ? [sibling] : sibling.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        for (var i = candidates.length - 1; i >= 0; i--) {
+          var text = candidates[i].textContent.trim();
+          if (text && text.length <= MAX_LABEL && !candidates[i].closest('[aria-hidden="true"]')) {
+            return candidates[i];
+          }
+        }
+      }
+      return null;
+    }
+
+    function nameCarouselRegion(widgetEl, region) {
+      if (region.hasAttribute('aria-label') || region.hasAttribute('aria-labelledby')) return;
+      var heading = findPrecedingHeading(widgetEl);
+      if (!heading) {
+        region.removeAttribute('role');
+        return;
+      }
+      if (!heading.id) heading.id = 'auto-landmark-heading-' + (++uid);
+      region.setAttribute('aria-labelledby', heading.id);
     }
 
     function labelWithin(root) {
