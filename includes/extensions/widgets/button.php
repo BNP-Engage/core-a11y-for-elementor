@@ -61,7 +61,6 @@ class Buttons_Widget {
         'at' => 'after',
       )
     );
-    // do_action( 'qm/debug', $element );
 
     // SWITCHER - Presentation Image
     $element->add_control(
