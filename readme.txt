@@ -62,6 +62,19 @@ If you need further assistance, we may able to help. You can [request a free web
 
 == Changelog ==
 
+= 1.2.0 - 2026-11-16 =
+* New: Play/pause button for sections and containers with a Vimeo, YouTube or hosted background video (on by default; hidden when the video is hidden for reduced motion)
+* New: Regions without a name (sections, asides, articles) are labelled automatically from their heading
+* New: Loop Carousel regions are named from the heading before them, and lose the region role when there is none
+* New: "Text with Custom aria-label" dynamic tag, with screen-reader-only text before and after
+* New: Control to hide decorative SVG icons from screen readers in the Button, Icon and Icon Box widgets (also removes the SVG tooltip title)
+* New: Controls to mark Image and Flip Box graphics as decorative, and an optional aria-label for linked images
+* New: Focus state controls for the Carousel, Image Carousel and Tabs widgets
+* New: Atomic Elements animations respect the reduced motion preference
+* New: Static image fallback for the Lottie widget
+* Fix: Focus outlines on Call to Action buttons are no longer cut off
+* Fix: Flip Box widget roles for screen readers
+
 = 1.1.0 - 2026-04-15 =
 * New: Controls to respect user's preference on reduce motion for Counter widget
 * New: Controls to respect user's preference on reduce motion for Sections
