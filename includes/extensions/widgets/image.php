@@ -45,6 +45,9 @@ class Image_Widget {
     // Register New controls for Image widget Accessibility
     add_action( 'elementor/element/image/section_style_image/before_section_end', [ $this, 'register_new_style_controls' ], 10, 2 );
 
+    // Edit render to add aria-label
+    add_action( 'elementor/frontend/before_render', [ $this, 'edit_widget_attribute' ], 10, 2 );
+
   }
 
   /**
@@ -91,6 +94,37 @@ class Image_Widget {
         ],
         'condition' => [
           $this->prefix.'full_height_image' => ['yes'],
+        ],
+      ]
+    );
+
+    // SWITCHER - Presentation Image
+    $element->add_control(
+      $this->prefix.'presentation_image',
+      [
+        'label' => __( 'Presentation Image', 'core-a11y-for-elementor'),
+        'description' => __( 'Select Yes to add the role of \'presentation\' to purely decorative images.', 'core-a11y-for-elementor'),
+        'type' => \Elementor\Controls_Manager::SWITCHER,
+        'label_on' => __( 'Yes', 'core-a11y-for-elementor'),
+        'label_off' => __( 'No', 'core-a11y-for-elementor'),
+        'return_value' => 'yes',
+        'default' => 'no',
+        'separator' => 'before',
+        'prefix_class' => 'core-a11y-pres-img-',
+      ]
+    );
+
+    // TEXT - Aria label
+    $element->add_control(
+      $this->prefix.'aria_label',
+      [
+        'label' => __( 'Custom Aria Label', 'core-a11y-for-elementor' ),
+        'description' => esc_attr__( 'Add an aria-label to be added to the <a> element in this widget if image is presentation.', 'core-a11y-for-elementor' ),
+        'type' => \Elementor\Controls_Manager::TEXT,
+        'placeholder' => __( 'homepage', 'core-a11y-for-elementor' ),
+        'condition' => [
+          $this->prefix.'presentation_image' => ['yes'],
+          'link_to' => 'custom',
         ],
       ]
     );
@@ -242,6 +276,22 @@ class Image_Widget {
     );
 
   }
+
+  /* Add aria-label to image link
+  --------------------------------------------------------------*/
+  public function edit_widget_attribute( $element ) {
+
+	if ( ! $element->get_settings( 'core_a11y_aria_label' ) ) {
+		return;
+	}
+
+	$element->add_render_attribute( 'link',
+    [
+      'aria-label' => $element->get_settings( 'core_a11y_aria_label' ),
+    ]
+  );
+
+}
 
 }
 new Image_Widget();

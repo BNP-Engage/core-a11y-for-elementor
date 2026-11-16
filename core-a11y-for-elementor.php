@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       Core A11Y - Accessibility for Elementor
  * Description:       An extension for Elementor and Elementor Pro which adds additional functionality to help fix accessibility issues.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 5.2
  * Requires PHP:      7.4
  * Author:            BNP Engage
@@ -38,7 +38,7 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
      * @since 1.0.0
      * @var string The addon version.
      */
-    const VERSION = '1.1.0';
+    const VERSION = '1.2.0';
 
     /**
      * Minimum Elementor Version
@@ -100,6 +100,7 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
 
       if ($this->is_compatible()) {
         add_action('elementor/init', [$this, 'init']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_reduced_motion_fix'], 0);
       }
 
     }
@@ -213,7 +214,13 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
         self::MINIMUM_PHP_VERSION
       );
 
-      printf(wp_kses('<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>)'), ['strong' => [], 'p' => [], 'div' => ['class' => []]], wp_kses($message, ['strong' => []]));
+      printf(
+        wp_kses(
+          '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>',
+          ['strong' => [], 'p' => [], 'div' => ['class' => []]]
+        ),
+        wp_kses($message, ['strong' => []])
+      );
 
     }
 
@@ -234,6 +241,7 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       $this->enqueue_scripts();
       $this->register_extensions_kit();
       $this->register_extensions_widgets();
+      $this->register_custom_dynamic_tags();
     }
 
     /**
@@ -261,6 +269,49 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
 
       // Theme Script
       wp_enqueue_script('core-a11y-for-elementor', plugin_dir_url(__FILE__) . '/assets/js/core-a11y-for-elementor-public.js', array('jquery'), self::VERSION, true);
+
+    }
+
+    /**
+     * Enqueue Reduced Motion Fix
+     *
+     * Loads an early frontend-only fix for Elementor Pro Atomic Interactions that do not currently honor prefers-reduced-motion.
+     *
+     * @since 1.1.1
+     */
+    public function enqueue_reduced_motion_fix()
+    {
+
+      if (is_admin()) {
+        return;
+      }
+
+      wp_enqueue_script(
+        'core-a11y-for-elementor-reduced-motion',
+        plugin_dir_url(__FILE__) . '/assets/js/core-a11y-for-elementor-reduced-motion.js',
+        [],
+        self::VERSION,
+        false
+      );
+
+      wp_add_inline_style(
+        'core-a11y-for-elementor',
+        '@media (prefers-reduced-motion: reduce) {
+  html.core-a11y-prefers-reduced-motion,
+  html.core-a11y-prefers-reduced-motion * {
+    scroll-behavior: auto !important;
+  }
+
+  html.core-a11y-prefers-reduced-motion [data-core-a11y-motion-disabled="true"] {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+  }
+}'
+      );
 
     }
 
@@ -302,15 +353,20 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       // Widget - Call To Action
       require_once(__DIR__ . '/includes/extensions/widgets/call-to-action.php');
 
+      // Widget - Carousel
+      require_once(__DIR__ . '/includes/extensions/widgets/carousel.php');
+
       // Widget - Form
       require_once(__DIR__ . '/includes/extensions/widgets/form.php');
 
       // Widget - Image
       require_once(__DIR__ . '/includes/extensions/widgets/image.php');
 
+      // Widget - Image Carousel
+      require_once(__DIR__ . '/includes/extensions/widgets/image-carousel.php');
+
       // Widget - Testimonial Carousel
       require_once(__DIR__ . '/includes/extensions/widgets/testimonial-carousel.php');
-
 
       // Widget - Section
       require_once(__DIR__ . '/includes/extensions/widgets/section.php');
@@ -318,6 +374,40 @@ if (!class_exists('Core_A11Y_For_Elementor_Main')) {
       // Widget - Counter
       require_once(__DIR__ . '/includes/extensions/widgets/counter.php');
 
+      // Widget - Lottie
+      require_once(__DIR__ . '/includes/extensions/widgets/lottie.php');
+
+      // Widget - Flip Box
+      require_once(__DIR__ . '/includes/extensions/widgets/flip-box.php');
+
+      // Widget - Nested Tabs
+      require_once(__DIR__ . '/includes/extensions/widgets/nested-tabs.php');
+
+      // Widget - Icon / Icon Box
+      require_once(__DIR__ . '/includes/extensions/widgets/icon-icon-box.php');
+
+    }
+
+    /**
+     * Init Custom Dynamic Tags
+     *
+     * Include custom dynamic tags for use within Elementor
+     *
+     * @since 1.0.0
+     *
+     * @access public
+     */
+    public function register_custom_dynamic_tags() {
+      add_action( 'elementor/dynamic_tags/register', function( $dynamic_tags_manager ) {
+        $dynamic_tags_manager->register_group( 'core-a11y-for-elementor', [
+          'title' => 'Core A11Y' 
+        ] );
+        
+        // Text with aria-label
+        include_once( __DIR__ . '/includes/extensions/dynamic/text-aria-label.php' );
+        $dynamic_tags_manager->register( new Core_A11y_Text_Aria_Label );
+
+      } );
     }
 
   }
