@@ -73,7 +73,7 @@ class Core_A11y_Text_Aria_Label extends \Elementor\Core\DynamicTags\Tag {
 		}
 
 		if ( !empty($value) ) {
-			echo $value;
+			echo wp_kses_post( $value );
 		}
 	}
 }
