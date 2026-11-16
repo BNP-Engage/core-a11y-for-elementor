@@ -67,13 +67,16 @@ class Icon_Icon_Box_Widget {
       $this->prefix.'presentation_image',
       [
         'label' => __( 'Presentation Image', 'core-a11y-for-elementor'),
-        'description' => __( 'Select Yes to add the role of \'presentation\' to purely decorative images.', 'core-a11y-for-elementor'),
+        'description' => __( 'Select Yes to hide this icon from screen readers. Use only for decorative icons that sit next to text.', 'core-a11y-for-elementor'),
         'type' => \Elementor\Controls_Manager::SWITCHER,
         'label_on' => __( 'Yes', 'core-a11y-for-elementor'),
         'label_off' => __( 'No', 'core-a11y-for-elementor'),
         'return_value' => 'yes',
         'default' => 'no',
         'prefix_class' => 'core-a11y-pres-img-',
+        'condition' => [
+          'selected_icon[library]' => 'svg'
+        ],
       ]
     );
 
